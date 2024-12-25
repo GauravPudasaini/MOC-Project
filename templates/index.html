@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <title>DFA Visualization</title>
+</head>
+<body>
+    <div class="container">
+        <div class="form-section">
+            <h1>DFA Visualization</h1>
+            <form method="POST" onsubmit="clearResult();">
+                <label for="states">States (space-separated):</label>
+                <input type="text" id="states" name="states" placeholder="e.g., q0 q1 q2" required>
+
+                <label for="alphabets">Alphabets (space-separated):</label>
+                <input type="text" id="alphabets" name="alphabets" placeholder="e.g., a b" required>
+
+                <label for="init_state">Initial State:</label>
+                <input type="text" id="init_state" name="init_state" placeholder="e.g., q0" required>
+
+                <label for="final_states">Final States (space-separated):</label>
+                <input type="text" id="final_states" name="final_states" placeholder="e.g., q2" required>
+
+                <div id="transitions">
+                    <p><strong>Define Transitions:</strong></p>
+                    <p style="color: #555; font-size: 14px;">Add state details dynamically by entering states above.</p>
+                </div>
+
+                <input type="submit" value="Generate DFA">
+            </form>
+        </div>
+        
+        <div class="result-section">
+            <h2>Generated DFA</h2 style >
+            <div class = generated_image>
+            {% if graph %}
+                <img id="dfa-image" src="{{ url_for('static', filename=graph) }}" alt="DFA Graph">
+            {% endif %}
+            </div>
+            <h2> Regular Expression </h2>
+            <div id="regex-output"> {{regex}} </div>  
+    </div>
+
+    <script>
+        const statesInput = document.getElementById('states');
+        const transitionsDiv = document.getElementById('transitions');
+        const dfaImage = document.getElementById('dfa-image');
+        const dfaOutput = document.getElementById('dfa-output');
+        const regexOutput = document.getElementById('regex-output');
+
+        statesInput.addEventListener('input', () => {
+            transitionsDiv.innerHTML = '<p><strong>Define Transitions:</strong></p>';
+            const states = statesInput.value.trim().split(/\s+/);
+            states.forEach(state => {
+                const inputField = `<label for="transitions_${state}">Transitions from ${state} (space-separated):</label><br>
+                                    <input type="text" id="transitions_${state}" name="transitions_${state}" placeholder="e.g., q1 a, q2 b" required><br><br>`;
+                transitionsDiv.innerHTML += inputField;
+            });
+        });
+
+        function Result() {
+        }
+        if (dfaImage) {
+            dfaImage.style.display = 'block';
+        }
+        if (regexOutput) {
+            regexOutput.textContent = ' {{regex}}';
+        }   
+    </script>
+</body>
+</html>
+
